@@ -23,14 +23,19 @@ Use this workflow for every change. Keep the work on `main`; do not create, swit
 
 2. Make the smallest focused change. Keep credentials, tokens, private keys, and other secrets out of source, test data, logs, screenshots, and commits. Use environment variables for values that must be supplied locally.
 
-3. Run the relevant Playwright tests. For a focused change, run the affected spec first; before committing, run the complete suite:
+3. Run only the Playwright tests relevant to the current changes by default:
 
    ```powershell
    npx playwright test tests/<affected-file>.spec.ts
-   npx playwright test
    ```
 
-   The configured suite covers Chromium, Firefox, and WebKit. If browsers are missing, install the required Playwright browsers and rerun the tests. Investigate failures before committing; do not hide them by weakening assertions or skipping tests.
+   - If a change affects a specific test or spec, run that affected spec only.
+   - If a change affects multiple related tests, run only those relevant tests.
+   - Do not automatically run the full Chromium, Firefox, and WebKit suite on every Go-Go-Go workflow.
+   - Run the full suite (`npx playwright test`) only when the user explicitly requests it or the changes are broad enough to reasonably require a full regression check.
+   - If tests fail because of the current changes, fix the issue and rerun the relevant tests.
+
+   If browsers are missing, install the required Playwright browsers and rerun the relevant tests. Investigate failures; do not hide them by weakening assertions or skipping tests.
 
 4. Check for accidental secrets before staging. Review both the working tree and the final staged diff. This is a quick high-signal scan, not a substitute for reviewing every match:
 
